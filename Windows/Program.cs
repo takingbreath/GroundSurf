@@ -197,6 +197,15 @@ namespace GroundSurf {
                 settings.Appearance=mode;RefreshPlayback();await Task.Delay(300);
                 var themed=await ReadStats(view);
                 if(Convert.ToString(themed["appearance"])!=mode || mode!="system" && Convert.ToBoolean(themed["dark"])!=(mode=="dark" || mode=="purple"))throw new Exception("Appearance did not apply: "+mode);
+                if(mode=="purple") {
+                    using(var capture=new MemoryStream()) {
+                        await view.Snapshot(capture);capture.Position=0;
+                        using(var bitmap=new Bitmap(capture)) {
+                            var colour=bitmap.GetPixel(5,5);
+                            if(!(colour.B>colour.R && colour.R>colour.G))throw new Exception("Purple appearance was not painted in the WebView snapshot.");
+                        }
+                    }
+                }
                 if(Convert.ToDouble(themed["position"])!=Convert.ToDouble(later["position"]) || Convert.ToInt32(themed["objects"])!=Convert.ToInt32(later["objects"]))throw new Exception("Appearance changed the landscape or resumed paused playback.");
             }
             locked=true;settings.Paused=false;RefreshPlayback();if(ticks.Enabled)throw new Exception("Session lock did not stop the timer.");
