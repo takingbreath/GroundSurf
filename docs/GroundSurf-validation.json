@@ -1,0 +1,188 @@
+{
+  "date": "2026-10-07",
+  "version": "1.3 (4)",
+  "geometry": {
+    "result": "PASS",
+    "fixedSeedOutput": [
+      {
+        "seed": "GroundSurf-profile",
+        "baseline": {
+          "ms": 5244.596208000001,
+          "bytes": 22905502,
+          "hash": "d078b52b7ff617a00d4b606ec95d596a6aefdfce9bbfe15fcc3731286e29fede"
+        },
+        "optimized": {
+          "ms": 3882.6249589999998,
+          "bytes": 22905502,
+          "hash": "d078b52b7ff617a00d4b606ec95d596a6aefdfce9bbfe15fcc3731286e29fede"
+        }
+      },
+      {
+        "seed": "dense-forest",
+        "baseline": {
+          "ms": 2756.6102499999997,
+          "bytes": 14119405,
+          "hash": "2aa77db8dace9ee3bb03ed25f7305e98ca110c9a40154736ba2e555d45bf4ae4"
+        },
+        "optimized": {
+          "ms": 2218.131542000001,
+          "bytes": 14119405,
+          "hash": "2aa77db8dace9ee3bb03ed25f7305e98ca110c9a40154736ba2e555d45bf4ae4"
+        }
+      },
+      {
+        "seed": "river-boats",
+        "baseline": {
+          "ms": 3068.7712090000005,
+          "bytes": 14446080,
+          "hash": "808ddb51e505b0b7b8628bca1f4a5de8b5bae77ff12bfc5704f0965e2aa17184"
+        },
+        "optimized": {
+          "ms": 2268.559416,
+          "bytes": 14446080,
+          "hash": "808ddb51e505b0b7b8628bca1f4a5de8b5bae77ff12bfc5704f0965e2aa17184"
+        }
+      }
+    ],
+    "exactCommandPolylines": 61715,
+    "primitiveSupport": true,
+    "visibleBoundsObjects": 73
+  },
+  "renderedPixels": {
+    "quality-modern-final": {
+      "differenceBounds": null,
+      "channelMeanDifference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "quality-fallback-final": {
+      "differenceBounds": null,
+      "channelMeanDifference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "boundedScrolling": {
+    "result": "PASS",
+    "sections": 100,
+    "samples": [
+      {
+        "start": 0,
+        "objects": 79,
+        "planning": 774,
+        "geometryBytes": 8067584,
+        "commands": 18110,
+        "seed": "worker-stress",
+        "ms": 2102.634375
+      },
+      {
+        "start": 5120,
+        "objects": 148,
+        "planning": 1202,
+        "geometryBytes": 20997520,
+        "commands": 25750,
+        "seed": "worker-stress",
+        "ms": 483.3230000000003
+      },
+      {
+        "start": 10240,
+        "objects": 111,
+        "planning": 1127,
+        "geometryBytes": 14305520,
+        "commands": 14577,
+        "seed": "worker-stress",
+        "ms": 194.5532919999987
+      },
+      {
+        "start": 15360,
+        "objects": 125,
+        "planning": 1127,
+        "geometryBytes": 15856432,
+        "commands": 13993,
+        "seed": "worker-stress",
+        "ms": 20.367749999999432
+      },
+      {
+        "start": 20480,
+        "objects": 150,
+        "planning": 1219,
+        "geometryBytes": 19196256,
+        "commands": 28197,
+        "seed": "worker-stress",
+        "ms": 344.69558400000096
+      },
+      {
+        "start": 25600,
+        "objects": 83,
+        "planning": 1127,
+        "geometryBytes": 10345184,
+        "commands": 13649,
+        "seed": "worker-stress",
+        "ms": 5.908416999998735
+      },
+      {
+        "start": 30720,
+        "objects": 112,
+        "planning": 1217,
+        "geometryBytes": 13039040,
+        "commands": 14534,
+        "seed": "worker-stress",
+        "ms": 505.83616600000096
+      },
+      {
+        "start": 35840,
+        "objects": 108,
+        "planning": 1265,
+        "geometryBytes": 14232720,
+        "commands": 12881,
+        "seed": "worker-stress",
+        "ms": 1200.7615829999995
+      },
+      {
+        "start": 40960,
+        "objects": 130,
+        "planning": 1134,
+        "geometryBytes": 18095792,
+        "commands": 17733,
+        "seed": "worker-stress",
+        "ms": 279.42391599999974
+      },
+      {
+        "start": 46080,
+        "objects": 148,
+        "planning": 1127,
+        "geometryBytes": 16831360,
+        "commands": 14455,
+        "seed": "worker-stress",
+        "ms": 18.43883300000016
+      }
+    ],
+    "bounds": true,
+    "errorRecovery": true
+  },
+  "nativeLifecycle": {
+    "result": "PASS",
+    "checks": [
+      "pause removes timer",
+      "resume restores timer",
+      "computer and display sleep each remove timer",
+      "one wake reason does not override the other sleep reason"
+    ]
+  },
+  "package": {
+    "adHocSignature": "PASS for original bundle and ditto-extracted ZIP",
+    "target": "arm64 macOS 13+"
+  },
+  "limitations": [
+    "Node generation timings are single runs per seed, not total native CPU or battery measurements.",
+    "100-section test checks retained geometry and planning data, not whole-process RAM.",
+    "Rendered-pixel comparison covers one fixed initial scene at 1024x768 on this Mac, in both worker and fallback paths.",
+    "No overnight or 30\u201360 minute native memory soak was completed."
+  ]
+}

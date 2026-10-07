@@ -1,0 +1,20 @@
+GroundSurf by Akhilesh Khajuria
+
+An offline, endlessly scrolling Chinese landscape wallpaper.
+Supports Apple Silicon and Intel Macs running macOS 13 or later.
+Intel compatibility is built into the binary but has not been tested on Intel hardware.
+
+Drag GroundSurf.app onto Applications, then open it.
+Use the GroundSurf menu in the menu bar to pause, change speed, create a new landscape, or quit.
+Quitting reveals your previous wallpaper.
+
+This preview is ad-hoc signed and NOT Apple notarized.
+macOS may block the first launch of an app downloaded from the internet.
+Read Apple's guidance before deciding whether to open it:
+https://support.apple.com/en-us/102445
+
+The app does not configure launch at login. Scenery stays at full detail.
+Preparing ahead uses additional bounded memory. Overnight stability and battery use have not been established.
+
+Source: https://github.com/takingbreath/GroundSurf
+Original generator: Lingdong Huang, https://github.com/LingDong-/shan-shui-inf (MIT)
