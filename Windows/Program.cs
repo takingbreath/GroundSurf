@@ -31,7 +31,7 @@ namespace GroundSurf {
             try {
                 var value=new JavaScriptSerializer().Deserialize<Preferences>(File.ReadAllText(Path.Combine(AppLog.Folder,"settings.json")));
                 if(value==null)return new Preferences();
-                if(value.Appearance!="light" && value.Appearance!="dark" && value.Appearance!="system")value.Appearance="light";
+                if(value.Appearance!="light" && value.Appearance!="dark" && value.Appearance!="purple" && value.Appearance!="system")value.Appearance="light";
                 if(value.Speed!=6 && value.Speed!=12 && value.Speed!=24)value.Speed=12;
                 return value;
             } catch{return new Preferences();}
@@ -95,7 +95,7 @@ namespace GroundSurf {
             speeds.DropDownOpening+=(_,__)=>{foreach(ToolStripMenuItem item in speeds.DropDownItems)item.Checked=(int)item.Tag==settings.Speed;};menu.Items.Add(speeds);
             menu.Items.Add("New landscape",null,(_,__)=>{foreach(var view in views)view.NewLandscape();});
             var appearances=new ToolStripMenuItem("Appearance");
-            foreach(var option in new[]{Tuple.Create("Light","light"),Tuple.Create("Dark","dark"),Tuple.Create("Follow system","system")}) {
+            foreach(var option in new[]{Tuple.Create("Light","light"),Tuple.Create("Dark","dark"),Tuple.Create("Dark Purple","purple"),Tuple.Create("Follow system","system")}) {
                 var entry=new ToolStripMenuItem(option.Item1) {Tag=option.Item2};
                 entry.Click+=(_,__)=>{settings.Appearance=(string)entry.Tag;settings.Save();RefreshPlayback();};
                 appearances.DropDownItems.Add(entry);
@@ -193,10 +193,10 @@ namespace GroundSurf {
             settings.Paused=true;RefreshPlayback();await Task.Delay(300);
             var paused=await ReadStats(view);await Task.Delay(1000);var later=await ReadStats(view);
             if(ticks.Enabled || Convert.ToDouble(paused["position"])!=Convert.ToDouble(later["position"]))throw new Exception("Pause did not stop the animation timer and cursor.");
-            foreach(var mode in new[]{"dark","system","light"}) {
+            foreach(var mode in new[]{"dark","purple","system","light"}) {
                 settings.Appearance=mode;RefreshPlayback();await Task.Delay(300);
                 var themed=await ReadStats(view);
-                if(Convert.ToString(themed["appearance"])!=mode || mode!="system" && Convert.ToBoolean(themed["dark"])!=(mode=="dark"))throw new Exception("Appearance did not apply: "+mode);
+                if(Convert.ToString(themed["appearance"])!=mode || mode!="system" && Convert.ToBoolean(themed["dark"])!=(mode=="dark" || mode=="purple"))throw new Exception("Appearance did not apply: "+mode);
                 if(Convert.ToDouble(themed["position"])!=Convert.ToDouble(later["position"]) || Convert.ToInt32(themed["objects"])!=Convert.ToInt32(later["objects"]))throw new Exception("Appearance changed the landscape or resumed paused playback.");
             }
             locked=true;settings.Paused=false;RefreshPlayback();if(ticks.Enabled)throw new Exception("Session lock did not stop the timer.");

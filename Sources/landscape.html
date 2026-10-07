@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;overflow:hidden;background:#f4ecd9}html[data-dark="true"],html[data-dark="true"] body{background:#141414}html[data-dark="true"] canvas{filter:invert(1) grayscale(1)}canvas{position:absolute;left:0;top:0;will-change:transform}</style></head><body><canvas id="scene" width="0" height="0"></canvas><script id="groundsurf-worker" type="text/groundsurf-worker">var selfWindow={location:{href:'file:///GroundSurf'},btoa:self.btoa.bind(self)};
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;overflow:hidden;background:#f4ecd9}html[data-dark="true"],html[data-dark="true"] body{background:#141414}html[data-dark="true"] canvas{filter:invert(1) grayscale(1)}html[data-appearance="purple"],html[data-appearance="purple"] body{background:#2b1c40}html[data-appearance="purple"] canvas{filter:url(#purple-ink)}canvas{position:absolute;left:0;top:0;will-change:transform}</style></head><body><svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute"><defs><filter id="purple-ink" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="-.14882 -.50064 -.05054 0 .82 -.14882 -.50064 -.05054 0 .76 -.14882 -.50064 -.05054 0 .90 0 0 0 1 0"/></filter></defs></svg><canvas id="scene" width="0" height="0"></canvas><script id="groundsurf-worker" type="text/groundsurf-worker">var selfWindow={location:{href:'file:///GroundSurf'},btoa:self.btoa.bind(self)};
 var window=selfWindow;
 var document={addEventListener(){}};
 console.log=function(){};
@@ -4177,7 +4177,7 @@ const worker=new Worker(sourceURL);URL.revokeObjectURL(sourceURL);
 let hasScene=false,cursor=0,renderAt=0,running=true,speed=12,last=0,pending=false,nextScene=null,frames=0,request=0,lastError='',retryAt=0,stats={},generationMs=0,paintMs=0;
 let appearance='light';
 const systemAppearance=matchMedia('(prefers-color-scheme: dark)');
-function applyAppearance(){document.documentElement.dataset.dark=String(appearance==='dark' || appearance==='system' && systemAppearance.matches);}
+function applyAppearance(){document.documentElement.dataset.appearance=appearance;document.documentElement.dataset.dark=String(appearance==='purple' || appearance==='dark' || appearance==='system' && systemAppearance.matches);}
 systemAppearance.addEventListener('change',applyAppearance);
 const seed=new URLSearchParams(location.search).get('seed') || String(Date.now());
 function dimensions(){const scale=innerHeight/(800/1.142);return {width:Math.ceil(innerWidth+1024*scale),height:innerHeight,viewportWidth:innerWidth};}
@@ -4222,7 +4222,7 @@ function frame(t) {
     position();frames++;
   }catch(error){lastError=String(error);retryAt=t+5000;}
 }
-window.wallpaper={appearance(value){appearance=['light','dark','system'].includes(value)?value:'light';applyAppearance();},pause(p){running=!p;last=0;},speed(v){speed=v;},tick(){frame(performance.now());},stats(){return {...stats,appearance,dark:document.documentElement.dataset.dark==='true',position:cursor,frames,busy:pending,prepared:!!nextScene,lastError,generationMs,paintMs,bitmapWidth:scene.width,bitmapHeight:scene.height};}};
+window.wallpaper={appearance(value){appearance=['light','dark','purple','system'].includes(value)?value:'light';applyAppearance();},pause(p){running=!p;last=0;},speed(v){speed=v;},tick(){frame(performance.now());},stats(){return {...stats,appearance,dark:document.documentElement.dataset.dark==='true',position:cursor,frames,busy:pending,prepared:!!nextScene,lastError,generationMs,paintMs,bitmapWidth:scene.width,bitmapHeight:scene.height};}};
 window.addEventListener('resize',()=>{nextScene?.bitmap?.close();nextScene=null;pending=false;prepare(cursor);});
 window.addEventListener('pagehide',()=>{nextScene?.bitmap?.close();worker.terminate();});
 prepare(0,'init');

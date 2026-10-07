@@ -44,8 +44,8 @@ final class Controller: NSObject, NSApplicationDelegate, WKNavigationDelegate {
         let speedMenu = NSMenuItem(title:"Scroll Speed",action:nil,keyEquivalent:"")
         speedMenu.submenu = speeds; menu.addItem(speedMenu)
         let appearances = NSMenu()
-        if !["light","dark","system"].contains(appearance) {appearance="light"}
-        for (name, value) in [("Light","light"),("Dark","dark"),("Follow System","system")] {
+        if !["light","dark","purple","system"].contains(appearance) {appearance="light"}
+        for (name, value) in [("Light","light"),("Dark","dark"),("Dark Purple","purple"),("Follow System","system")] {
             let entry = item(name, #selector(setAppearance(_:)), appearances)
             entry.representedObject=value;entry.state=value == appearance ? .on : .off
             appearanceItems.append(entry)

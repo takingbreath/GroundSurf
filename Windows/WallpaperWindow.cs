@@ -65,7 +65,7 @@ namespace GroundSurf {
         internal event Action BrowserExited;
         internal void SetPlayback(bool pause,int speed,string appearance="light") {
             if(pause==desiredPause && speed==desiredSpeed && pause==pauseApplied && speed==appliedSpeed && appearance==desiredAppearance && appearance==appliedAppearance)return;
-            desiredPause=pause;desiredSpeed=speed;desiredAppearance=appearance=="dark" || appearance=="system" ? appearance : "light";
+            desiredPause=pause;desiredSpeed=speed;desiredAppearance=appearance=="dark" || appearance=="purple" || appearance=="system" ? appearance : "light";
             if(ready)_=ApplyPlayback();
         }
         async Task ApplyPlayback() {
