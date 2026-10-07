@@ -1,5 +1,5 @@
 #!/bin/bash
-# GroundSurf 1.3.0 preview. Downloaded code and artifacts can be reviewed on GitHub.
+# GroundSurf 1.4.0 preview. Downloaded code and artifacts can be reviewed on GitHub.
 # The ZIP checksum is pinned to this release. No sudo or developer tools required.
 set -euo pipefail
 fail() { printf 'GroundSurf: %s\n' "$*" >&2; exit 1; }
@@ -22,9 +22,9 @@ TMP="$(mktemp -d "${TMPDIR:-/tmp}/groundsurf-download.XXXXXX")"
 STAGE=""
 cleanup() { rm -rf "$TMP"; [[ -z "$STAGE" ]] || rm -rf "$STAGE"; }
 trap cleanup EXIT
-URL="https://github.com/takingbreath/GroundSurf/releases/download/v1.3.0/GroundSurf-1.3.0-universal.zip"
-EXPECTED="88b805bfd2b284a07f7c2b8063726f7d28c729077b2ecf44faf867efe95b8589"
-printf 'Downloading GroundSurf 1.3.0 (universal Mac preview)...\n'
+URL="https://github.com/takingbreath/GroundSurf/releases/download/v1.4.0/GroundSurf-1.4.0-universal.zip"
+EXPECTED="dc753d25c84752ecbfbf6811098f6e353a8639ad7e668bdbb6d2aa45421612d0"
+printf 'Downloading GroundSurf 1.4.0 (universal Mac preview)...\n'
 curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --retry 3 "$URL" -o "$TMP/GroundSurf.zip"
 ACTUAL="$(shasum -a 256 "$TMP/GroundSurf.zip" | awk '{print $1}')"
 [[ "$ACTUAL" == "$EXPECTED" ]] || fail "Download checksum mismatch; nothing was installed."
@@ -32,7 +32,7 @@ ditto -x -k "$TMP/GroundSurf.zip" "$TMP/unpacked"
 APP="$TMP/unpacked/GroundSurf.app"
 [[ -d "$APP" ]] || fail "Release does not contain GroundSurf.app."
 [[ "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$APP/Contents/Info.plist")" == local.groundsurf.wallpaper ]] || fail "Unexpected app identity."
-[[ "$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP/Contents/Info.plist")" == 1.3.0 ]] || fail "Unexpected app version."
+[[ "$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP/Contents/Info.plist")" == 1.4.0 ]] || fail "Unexpected app version."
 codesign --verify --deep --strict "$APP"
 mkdir -p "$DEST"
 STAGE="$(mktemp -d "$DEST/.groundsurf-install.XXXXXX")"

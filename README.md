@@ -26,7 +26,7 @@ Windows CI executes the actual renderer and install/uninstall checks. Physical W
 
 ## Mac download
 
-[Download the universal DMG](https://github.com/takingbreath/GroundSurf/releases/download/v1.3.0/GroundSurf-1.3.0-universal.dmg), open it, drag GroundSurf into Applications, and open the app.
+[Download the universal DMG](https://github.com/takingbreath/GroundSurf/releases/download/v1.4.0/GroundSurf-1.4.0-universal.dmg), open it, drag GroundSurf into Applications, and open the app.
 
 macOS 13 or later. Universal binary for Apple Silicon and Intel. Tested on Apple Silicon; Intel hardware and older macOS versions still need validation.
 
@@ -37,7 +37,7 @@ macOS 13 or later. Universal binary for Apple Silicon and Intel. Tested on Apple
 Installs to `~/Applications`, verifies a pinned SHA-256 and the app's code-signature integrity, and keeps a previous installation as a backup. It does not require sudo or compilation tools, and it does not auto-launch the app.
 
 ```sh
-curl -fsSL https://github.com/takingbreath/GroundSurf/releases/download/v1.3.0/install.sh | bash
+curl -fsSL https://github.com/takingbreath/GroundSurf/releases/download/v1.4.0/install.sh | bash
 ```
 
 You can download and review `install.sh` first. `GROUNDSURF_INSTALL_DIR` may specify another absolute installation directory. Quit an existing GroundSurf installation before updating.
@@ -86,6 +86,6 @@ node tests/worker-stress.cjs
 
 MIT license. The landscape generator was created by Lingdong Huang in 2018; its original license is included in `Sources/LICENSE-original.txt`. GroundSurf adds the macOS shell, app packaging, bounded command renderer, worker pipeline, performance changes, and install tools. The app icon includes a decorative red sun; the wallpaper does not currently generate a sun.
 
-### Appearance
+### Appearance (Mac 1.4.0; Windows development build)
 
 The menu bar (Mac) or tray (Windows) includes **Appearance → Light, Dark, Follow System**. Light keeps the original warm paper. Dark uses charcoal paper and pale ink, preserving the same scenery and scroll position. The choice is saved across launches. Follow System tracks the operating system appearance. Colour conversion is applied to the existing canvas; changing appearance does not regenerate geometry or resume a paused scene. This may add compositor work in dark mode; no CPU, RAM or battery reduction is claimed.
