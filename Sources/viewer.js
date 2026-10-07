@@ -3,6 +3,10 @@ const workerSource=document.getElementById('groundsurf-worker').textContent;
 const sourceURL=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));
 const worker=new Worker(sourceURL);URL.revokeObjectURL(sourceURL);
 let hasScene=false,cursor=0,renderAt=0,running=true,speed=12,last=0,pending=false,nextScene=null,frames=0,request=0,lastError='',retryAt=0,stats={},generationMs=0,paintMs=0;
+let appearance='light';
+const systemAppearance=matchMedia('(prefers-color-scheme: dark)');
+function applyAppearance(){document.documentElement.dataset.dark=String(appearance==='dark' || appearance==='system' && systemAppearance.matches);}
+systemAppearance.addEventListener('change',applyAppearance);
 const seed=new URLSearchParams(location.search).get('seed') || String(Date.now());
 function dimensions(){const scale=innerHeight/(800/1.142);return {width:Math.ceil(innerWidth+1024*scale),height:innerHeight,viewportWidth:innerWidth};}
 function prepare(start,kind='prepare') {
@@ -46,7 +50,7 @@ function frame(t) {
     position();frames++;
   }catch(error){lastError=String(error);retryAt=t+5000;}
 }
-window.wallpaper={pause(p){running=!p;last=0;},speed(v){speed=v;},tick(){frame(performance.now());},stats(){return {...stats,position:cursor,frames,busy:pending,prepared:!!nextScene,lastError,generationMs,paintMs,bitmapWidth:scene.width,bitmapHeight:scene.height};}};
+window.wallpaper={appearance(value){appearance=['light','dark','system'].includes(value)?value:'light';applyAppearance();},pause(p){running=!p;last=0;},speed(v){speed=v;},tick(){frame(performance.now());},stats(){return {...stats,appearance,dark:document.documentElement.dataset.dark==='true',position:cursor,frames,busy:pending,prepared:!!nextScene,lastError,generationMs,paintMs,bitmapWidth:scene.width,bitmapHeight:scene.height};}};
 window.addEventListener('resize',()=>{nextScene?.bitmap?.close();nextScene=null;pending=false;prepare(cursor);});
 window.addEventListener('pagehide',()=>{nextScene?.bitmap?.close();worker.terminate();});
 prepare(0,'init');

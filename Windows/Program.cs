@@ -24,12 +24,14 @@ namespace GroundSurf {
     public sealed class Preferences {
         public bool Paused {get;set;}
         public int Speed {get;set;}=12;
+        public string Appearance {get;set;}="light";
         public bool PauseFullscreen {get;set;}=true;
         public bool PauseBattery {get;set;}
         internal static Preferences Load() {
             try {
                 var value=new JavaScriptSerializer().Deserialize<Preferences>(File.ReadAllText(Path.Combine(AppLog.Folder,"settings.json")));
                 if(value==null)return new Preferences();
+                if(value.Appearance!="light" && value.Appearance!="dark" && value.Appearance!="system")value.Appearance="light";
                 if(value.Speed!=6 && value.Speed!=12 && value.Speed!=24)value.Speed=12;
                 return value;
             } catch{return new Preferences();}
@@ -92,6 +94,13 @@ namespace GroundSurf {
             }
             speeds.DropDownOpening+=(_,__)=>{foreach(ToolStripMenuItem item in speeds.DropDownItems)item.Checked=(int)item.Tag==settings.Speed;};menu.Items.Add(speeds);
             menu.Items.Add("New landscape",null,(_,__)=>{foreach(var view in views)view.NewLandscape();});
+            var appearances=new ToolStripMenuItem("Appearance");
+            foreach(var option in new[]{Tuple.Create("Light","light"),Tuple.Create("Dark","dark"),Tuple.Create("Follow system","system")}) {
+                var entry=new ToolStripMenuItem(option.Item1) {Tag=option.Item2};
+                entry.Click+=(_,__)=>{settings.Appearance=(string)entry.Tag;settings.Save();RefreshPlayback();};
+                appearances.DropDownItems.Add(entry);
+            }
+            appearances.DropDownOpening+=(_,__)=>{foreach(ToolStripMenuItem entry in appearances.DropDownItems)entry.Checked=(string)entry.Tag==settings.Appearance;};menu.Items.Add(appearances);
             var full=new ToolStripMenuItem("Pause for fullscreen apps") {Checked=settings.PauseFullscreen,CheckOnClick=true};
             full.Click+=(_,__)=>{settings.PauseFullscreen=full.Checked;settings.Save();RefreshPlayback();};menu.Items.Add(full);
             var battery=new ToolStripMenuItem("Pause on battery") {Checked=settings.PauseBattery,CheckOnClick=true};
@@ -140,7 +149,7 @@ namespace GroundSurf {
                 foreach(var screen in screens) {
                     var view=new WallpaperWindow(screen.Bounds,target,icon);views.Add(view);
                     view.BrowserExited+=()=>{UI(async ()=>{try {await CreateEnvironment();await Rebuild();}catch(Exception e){AppLog.Write("Browser recovery",e);}});};
-                    view.SetPlayback(settings.Paused || locked || displaySleeping || computerSleeping,settings.Speed);
+                    view.SetPlayback(settings.Paused || locked || displaySleeping || computerSleeping,settings.Speed,settings.Appearance);
                     await view.Initialize(environment,testReport==null ? null : "GroundSurf-quality");
                 }
                 retryAfter=DateTime.MinValue;
@@ -155,7 +164,7 @@ namespace GroundSurf {
             foreach(var view in views) {
                 if(view.IsDisposed)continue;
                 var pause=global || settings.PauseFullscreen && NativeDesktop.CoveredByFullscreen(view.DisplayBounds);
-                view.SetPlayback(pause,settings.Speed);active|=!pause;
+                view.SetPlayback(pause,settings.Speed,settings.Appearance);active|=!pause;
             }
             ticks.Enabled=active && !rebuilding;
         }
@@ -184,6 +193,12 @@ namespace GroundSurf {
             settings.Paused=true;RefreshPlayback();await Task.Delay(300);
             var paused=await ReadStats(view);await Task.Delay(1000);var later=await ReadStats(view);
             if(ticks.Enabled || Convert.ToDouble(paused["position"])!=Convert.ToDouble(later["position"]))throw new Exception("Pause did not stop the animation timer and cursor.");
+            foreach(var mode in new[]{"dark","system","light"}) {
+                settings.Appearance=mode;RefreshPlayback();await Task.Delay(300);
+                var themed=await ReadStats(view);
+                if(Convert.ToString(themed["appearance"])!=mode || mode!="system" && Convert.ToBoolean(themed["dark"])!=(mode=="dark"))throw new Exception("Appearance did not apply: "+mode);
+                if(Convert.ToDouble(themed["position"])!=Convert.ToDouble(later["position"]) || Convert.ToInt32(themed["objects"])!=Convert.ToInt32(later["objects"]))throw new Exception("Appearance changed the landscape or resumed paused playback.");
+            }
             locked=true;settings.Paused=false;RefreshPlayback();if(ticks.Enabled)throw new Exception("Session lock did not stop the timer.");
             computerSleeping=true;displaySleeping=true;locked=false;computerSleeping=false;RefreshPlayback();if(ticks.Enabled)throw new Exception("Computer wake overrode display sleep.");
             displaySleeping=false;RefreshPlayback();if(!ticks.Enabled)throw new Exception("Wake did not restart the timer.");
@@ -211,7 +226,7 @@ namespace GroundSurf {
                     attachment="renderer-and-parent-verified";
                 } finally {test.Dispose();}
             }
-            var report=new {result="PASS",engine=environment.BrowserVersionString,scrolled=true,pauseStoppedTimer=true,overlappingSleepStates=true,desktopAttachment=attachment,stats=await ReadStats(view)};
+            var report=new {result="PASS",engine=environment.BrowserVersionString,scrolled=true,pauseStoppedTimer=true,appearanceSwitching=true,overlappingSleepStates=true,desktopAttachment=attachment,stats=await ReadStats(view)};
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(testReport)));
             File.WriteAllText(testReport,new JavaScriptSerializer().Serialize(report));ExitThread();
         }

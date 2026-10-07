@@ -14,6 +14,7 @@ namespace GroundSurf {
         bool ready, ticking, pauseApplied, changingPlayback;
         bool desiredPause;
         int desiredSpeed=12, appliedSpeed=-1;
+        string desiredAppearance="light",appliedAppearance=null;
         string source;
         internal bool Attached => desktop!=null && !IsDisposed && NativeDesktop.GetParent(Handle)==desktop.Parent;
         internal bool Loaded => ready;
@@ -47,7 +48,7 @@ namespace GroundSurf {
             core.NavigationStarting+=(_,e)=>{if(!e.Uri.StartsWith("https://groundsurf.local/",StringComparison.OrdinalIgnoreCase))e.Cancel=true;else ready=false;};
             core.NavigationCompleted+=async (_,e)=>{
                 if(!e.IsSuccess || IsDisposed)return;
-                ready=true;pauseApplied=false;appliedSpeed=-1;
+                ready=true;pauseApplied=false;appliedSpeed=-1;appliedAppearance=null;
                 await ApplyPlayback();
             };
             core.ProcessFailed+=(_,e)=>{
@@ -62,9 +63,9 @@ namespace GroundSurf {
             core.Navigate(source);
         }
         internal event Action BrowserExited;
-        internal void SetPlayback(bool pause,int speed) {
-            if(pause==desiredPause && speed==desiredSpeed && pause==pauseApplied && speed==appliedSpeed)return;
-            desiredPause=pause;desiredSpeed=speed;
+        internal void SetPlayback(bool pause,int speed,string appearance="light") {
+            if(pause==desiredPause && speed==desiredSpeed && pause==pauseApplied && speed==appliedSpeed && appearance==desiredAppearance && appearance==appliedAppearance)return;
+            desiredPause=pause;desiredSpeed=speed;desiredAppearance=appearance=="dark" || appearance=="system" ? appearance : "light";
             if(ready)_=ApplyPlayback();
         }
         async Task ApplyPlayback() {
@@ -73,10 +74,10 @@ namespace GroundSurf {
             try {
                 // Serialize pause/resume work; a newer desired state is applied in the loop.
                 do {
-                    var pause=desiredPause;var speed=desiredSpeed;
-                    await browser.CoreWebView2.ExecuteScriptAsync("window.wallpaper?.speed("+speed+");window.wallpaper?.pause("+(pause?"true":"false")+")");
-                    pauseApplied=pause;appliedSpeed=speed;
-                    if(pause==desiredPause && speed==desiredSpeed)break;
+                    var pause=desiredPause;var speed=desiredSpeed;var appearance=desiredAppearance;
+                    await browser.CoreWebView2.ExecuteScriptAsync("window.wallpaper?.appearance('"+appearance+"');window.wallpaper?.speed("+speed+");window.wallpaper?.pause("+(pause?"true":"false")+")");
+                    pauseApplied=pause;appliedSpeed=speed;appliedAppearance=appearance;
+                    if(pause==desiredPause && speed==desiredSpeed && appearance==desiredAppearance)break;
                 } while(ready && !IsDisposed);
             } catch(Exception e) {AppLog.Write("Playback",e);}
             finally {changingPlayback=false;}

@@ -85,3 +85,7 @@ node tests/worker-stress.cjs
 ## Credits and license
 
 MIT license. The landscape generator was created by Lingdong Huang in 2018; its original license is included in `Sources/LICENSE-original.txt`. GroundSurf adds the macOS shell, app packaging, bounded command renderer, worker pipeline, performance changes, and install tools. The app icon includes a decorative red sun; the wallpaper does not currently generate a sun.
+
+### Appearance
+
+The menu bar (Mac) or tray (Windows) includes **Appearance → Light, Dark, Follow System**. Light keeps the original warm paper. Dark uses charcoal paper and pale ink, preserving the same scenery and scroll position. The choice is saved across launches. Follow System tracks the operating system appearance. Colour conversion is applied to the existing canvas; changing appearance does not regenerate geometry or resume a paused scene. This may add compositor work in dark mode; no CPU, RAM or battery reduction is claimed.

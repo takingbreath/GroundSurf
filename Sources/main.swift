@@ -14,6 +14,8 @@ final class Controller: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     var displaySleeping = false
     var sleeping: Bool { computerSleeping || displaySleeping }
     var speed = 12
+    var appearance = UserDefaults.standard.string(forKey: "appearance") ?? "light"
+    var appearanceItems: [NSMenuItem] = []
     var timer: Timer?
     var pending = Set<ObjectIdentifier>()
     var diagnosticTick = 0
@@ -41,6 +43,15 @@ final class Controller: NSObject, NSApplicationDelegate, WKNavigationDelegate {
         }
         let speedMenu = NSMenuItem(title:"Scroll Speed",action:nil,keyEquivalent:"")
         speedMenu.submenu = speeds; menu.addItem(speedMenu)
+        let appearances = NSMenu()
+        if !["light","dark","system"].contains(appearance) {appearance="light"}
+        for (name, value) in [("Light","light"),("Dark","dark"),("Follow System","system")] {
+            let entry = item(name, #selector(setAppearance(_:)), appearances)
+            entry.representedObject=value;entry.state=value == appearance ? .on : .off
+            appearanceItems.append(entry)
+        }
+        let appearanceMenu = NSMenuItem(title:"Appearance",action:nil,keyEquivalent:"")
+        appearanceMenu.submenu=appearances;menu.addItem(appearanceMenu)
         item("New Landscape", #selector(newLandscape), menu)
         menu.addItem(.separator())
         item("About GroundSurf", #selector(about), menu)
@@ -108,9 +119,15 @@ final class Controller: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     }
     func webView(_ webView:WKWebView,didFinish navigation:WKNavigation!) {apply()}
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) { diagnostic("web-content-terminated-reloading"); load(webView) }
-    func apply(){for view in views {view.evaluateJavaScript("window.wallpaper?.pause(\(paused || sleeping));window.wallpaper?.speed(\(speed))",completionHandler:nil)}}
+    func apply(){for view in views {view.evaluateJavaScript("window.wallpaper?.appearance('\(appearance)');window.wallpaper?.pause(\(paused || sleeping));window.wallpaper?.speed(\(speed))",completionHandler:nil)}}
     @objc func togglePause(){paused.toggle();pauseItem.title=paused ? "Resume" : "Pause";apply();updateTimer()}
     @objc func setSpeed(_ sender:NSMenuItem){speed=sender.tag;for entry in sender.menu!.items {entry.state=entry===sender ? .on : .off};apply()}
+    @objc func setAppearance(_ sender:NSMenuItem){
+        guard let value=sender.representedObject as? String else {return}
+        appearance=value;UserDefaults.standard.set(value,forKey:"appearance")
+        for entry in appearanceItems {entry.state=entry===sender ? .on : .off}
+        apply()
+    }
     @objc func newLandscape(){diagnostic("new-landscape");for view in views{load(view)}}
     @objc func computerSleep(){computerSleeping=true;apply();updateTimer()}
     @objc func displaySleep(){displaySleeping=true;apply();updateTimer()}
