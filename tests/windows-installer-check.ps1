@@ -1,9 +1,16 @@
+param([switch]$PublishedEndpoint)
 $ErrorActionPreference = 'Stop'
 $script = Join-Path $PSScriptRoot '../docs/install.ps1'
 $tokens = $null; $errors = $null
 [void][Management.Automation.Language.Parser]::ParseFile($script,[ref]$tokens,[ref]$errors)
 if ($errors.Count) { throw ($errors | Out-String) }
 $source = Get-Content $script -Raw
+if ($PublishedEndpoint) {
+    $published = Invoke-RestMethod -UseBasicParsing -Uri 'https://takingbreath.github.io/GroundSurf/install.ps1'
+    if ($published -isnot [string]) { throw ('Unexpected endpoint response type: ' + $published.GetType().FullName) }
+    if ($published -ne $source) { throw 'Published script differs from checked source' }
+    $source = $published
+}
 $script:executed = $false
 function Start-Process {
     param([string]$FilePath,[string[]]$ArgumentList,[switch]$Wait,[switch]$PassThru)
