@@ -1,0 +1,19 @@
+name: Windows installer command
+on:
+  push:
+    paths: ['docs/install.ps1', 'tests/windows-installer-check.ps1', '.github/workflows/installer-command.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Check PowerShell 7 command
+        shell: pwsh
+        run: ./tests/windows-installer-check.ps1
+      - name: Check Windows PowerShell 5.1 command
+        shell: powershell
+        run: ./tests/windows-installer-check.ps1

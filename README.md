@@ -10,6 +10,14 @@ Works offline. Full-detail procedural art, gentle continuous scrolling, one scen
 
 A separate GroundSurf Windows app is also available: [Windows downloads](https://github.com/takingbreath/GroundSurf/releases/tag/windows-v0.1.0). Lively Wallpaper is not required.
 
+Install from **PowerShell in Windows Terminal** with one line:
+
+```powershell
+irm https://takingbreath.github.io/GroundSurf/install.ps1 | iex
+```
+
+The [installer script](docs/install.ps1) downloads the pinned release, verifies SHA-256, retains the Windows internet-origin marker, installs for the current user, and opens GroundSurf from its Start menu shortcut. Windows may request confirmation for the unsigned preview. It does not change execution policy or Windows security settings.
+
 Run the setup EXE, or extract the portable ZIP and launch GroundSurf.exe. The app lives in the system tray, provides pause/speed/new-landscape controls, saves preferences, and offers optional fullscreen/battery/startup rules. The setup defaults to a per-user installation without administrator privileges.
 
 Windows 11 x64 is the primary target; Windows 10 build 19041+ is targeted. It uses .NET Framework 4.8 and Microsoft's WebView2 Runtime, normally already present on Windows 11, to keep the download small. If WebView2 is missing, setup directs you to Microsoft's official runtime download. A small download does not establish low total RAM. The preview is not Authenticode signed and may show a SmartScreen/unknown-publisher warning.
