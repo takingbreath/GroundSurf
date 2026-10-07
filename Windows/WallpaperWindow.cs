@@ -21,10 +21,10 @@ namespace GroundSurf {
             DisplayBounds=bounds;desktop=target;Icon=icon;
             FormBorderStyle=FormBorderStyle.None;ShowInTaskbar=false;StartPosition=FormStartPosition.Manual;
             AutoScaleMode=AutoScaleMode.None;Bounds=bounds;BackColor=Color.FromArgb(244,236,217);
-            browser=new WebView2 {Dock=DockStyle.Fill,DefaultBackgroundColor=BackColor};Controls.Add(browser);
+            browser=new WebView2 {Dock=DockStyle.Fill,DefaultBackgroundColor=BackColor,Enabled=false};Controls.Add(browser);
         }
         protected override bool ShowWithoutActivation=>true;
-        protected override CreateParams CreateParams {get {var p=base.CreateParams;p.ExStyle|=0x80|0x08000000;return p;}}
+        protected override CreateParams CreateParams {get {var p=base.CreateParams;p.ExStyle|=0x80|0x08000000|0x20;return p;}}
         protected override void WndProc(ref Message m) {
             if(m.Msg==0x21){m.Result=new IntPtr(3);return;}
             if(m.Msg==0x84){m.Result=new IntPtr(-1);return;}

@@ -1,2 +1,3 @@
 tests/fixtures/upstream-original.html -whitespace
 Sources/generator.js whitespace=-blank-at-eof
+Windows/WebView2-SDK-LICENSE.txt -whitespace
