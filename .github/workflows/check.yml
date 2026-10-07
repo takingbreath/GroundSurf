@@ -1,7 +1,9 @@
 name: Validate and build
 on:
   push:
+    paths: ['Sources/**', 'scripts/build.sh', 'scripts/package.sh', 'tests/**', '.github/workflows/check.yml']
   pull_request:
+    paths: ['Sources/**', 'scripts/build.sh', 'scripts/package.sh', 'tests/**', '.github/workflows/check.yml']
   workflow_dispatch:
 permissions:
   contents: read

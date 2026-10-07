@@ -1,0 +1,60 @@
+name: Windows standalone
+on:
+  push:
+    paths:
+      - 'Windows/**'
+      - 'Sources/**'
+      - 'scripts/package-windows.ps1'
+      - '.github/workflows/windows.yml'
+  pull_request:
+    paths:
+      - 'Windows/**'
+      - 'Sources/**'
+      - 'scripts/package-windows.ps1'
+      - '.github/workflows/windows.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '8.0.x'
+      - name: Provision build tools and runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $inno = Join-Path $env:RUNNER_TEMP 'innosetup.exe'
+          Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe' -OutFile $inno
+          if ((Get-FileHash $inno -Algorithm SHA256).Hash.ToLower() -ne '0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f') { throw 'Build tool checksum mismatch' }
+          $target = Join-Path $env:RUNNER_TEMP 'inno'
+          $p = Start-Process $inno -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',('/DIR="'+$target+'"')) -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw 'Inno Setup install failed' }
+          "GROUNDSURF_ISCC=$target\ISCC.exe" >> $env:GITHUB_ENV
+          $runtime = Join-Path $env:RUNNER_TEMP 'WebView2Setup.exe'
+          Invoke-WebRequest 'https://go.microsoft.com/fwlink/p/?LinkId=2124703' -OutFile $runtime
+          $signature = Get-AuthenticodeSignature $runtime
+          if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Microsoft Corporation') { throw 'Untrusted Microsoft runtime installer' }
+          $p = Start-Process $runtime -ArgumentList @('/silent','/install') -Wait -PassThru
+          if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 2147747596) { Write-Warning "Runtime installer returned $($p.ExitCode); app probe will verify availability." }
+      - name: Build portable app and installer
+        shell: pwsh
+        run: ./scripts/package-windows.ps1 -InnoCompiler $env:GROUNDSURF_ISCC
+      - name: Test Windows renderer and install/uninstall
+        shell: pwsh
+        run: ./Windows/test-windows.ps1 -Exe "$pwd/dist/GroundSurf-Windows-0.1.0-x64/GroundSurf.exe"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: GroundSurf-Windows-preview
+          path: |
+            dist/*Setup-x64.exe
+            dist/*Portable-x64.zip
+            dist/WINDOWS-SHA256SUMS
+            dist/windows-validation.json
+            dist/windows-renderer.png
+            dist/windows-package-sizes.json

@@ -1,0 +1,37 @@
+GroundSurf by Akhilesh Khajuria — Windows preview 0.1.0
+
+Install with GroundSurf-Windows-0.1.0-Setup-x64.exe, or extract the portable
+ZIP and run GroundSurf.exe from the extracted folder. The portable app
+needs its accompanying files; do not move only the EXE.
+
+This is a standalone GroundSurf app. Lively Wallpaper is not required.
+Windows 11 is recommended. Windows 10 build 19041+ is targeted. This build
+is for x64 PCs; Windows on Arm is not yet a supported/tested target.
+.NET Framework 4.8 and Microsoft Edge WebView2 Runtime are required.
+Windows 11 normally already includes both. If WebView2 is missing, the
+installer directs you to Microsoft's official Evergreen Runtime download.
+
+The installer defaults to your user profile and does not need admin rights.
+Start with Windows and a desktop shortcut are optional, off by default.
+Use GroundSurf's system-tray menu to pause/resume, choose a speed, create a
+new landscape, set battery/fullscreen rules, or quit. Quitting reveals your
+normal wallpaper. Settings persist in your local app data.
+
+This public preview is not Authenticode signed. Windows may show an
+unknown-publisher or SmartScreen warning. Review the download source and
+checksums before deciding whether to run it. Organization-managed PCs may
+block unsigned apps.
+
+The same full-detail generator and bounded worker/canvas renderer are used
+as on macOS. A small installer does not imply low total RAM: WebView2,
+geometry and ahead buffers still consume memory. Overnight reliability,
+multi-monitor/DPI behavior and battery impact require Windows testing.
+
+Desktop placement uses Explorer's window hierarchy. Windows shell changes
+can require compatibility updates. Startup fails visibly if a suitable
+desktop background host cannot be found; it does not place a window over
+normal desktop icons as a fallback.
+
+Source and updates: https://github.com/takingbreath/GroundSurf
+Original artwork generator: https://github.com/LingDong-/shan-shui-inf
+Original MIT license is included alongside GroundSurf's license.

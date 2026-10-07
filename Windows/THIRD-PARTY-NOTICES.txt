@@ -1,0 +1,13 @@
+GroundSurf uses the Microsoft.Web.WebView2 SDK and the separately installed
+Microsoft Edge WebView2 Runtime. Microsoft component use is governed by
+Microsoft's license terms; these components are not covered by GroundSurf's
+MIT license. SDK terms are included as WebView2-SDK-LICENSE.txt.
+https://www.nuget.org/packages/Microsoft.Web.WebView2
+https://developer.microsoft.com/microsoft-edge/webview2/
+
+The original shan-shui-inf generator is Copyright (c) 2018 Lingdong Huang,
+MIT licensed. See LICENSE-original.txt. GroundSurf is by Akhilesh Khajuria.
+
+The setup executable is produced using Inno Setup by Jordan Russell and
+Martijn Laan. Inno Setup's notices are retained in its setup engine.
+https://jrsoftware.org/isinfo.php
