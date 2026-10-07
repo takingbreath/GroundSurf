@@ -8,7 +8,7 @@ $source = Get-Content $script -Raw
 if ($PublishedEndpoint) {
     $published = Invoke-RestMethod -UseBasicParsing -Uri 'https://takingbreath.github.io/GroundSurf/install.ps1'
     if ($published -isnot [string]) { throw ('Unexpected endpoint response type: ' + $published.GetType().FullName) }
-    if ($published -ne $source) { throw 'Published script differs from checked source' }
+    if ($published.Replace("`r`n","`n") -ne $source.Replace("`r`n","`n")) { throw 'Published script differs from checked source' }
     $source = $published
 }
 $script:executed = $false
