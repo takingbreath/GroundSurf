@@ -6,7 +6,17 @@ Endlessly generated Chinese landscape wallpaper for your Mac. GroundSurf by **Ak
 
 Works offline. Full-detail procedural art, gentle continuous scrolling, one scene per display, and a menu bar with Pause/Resume, speed controls, New Landscape, About, and Quit. Old scenery is discarded behind the view. Quitting reveals your existing wallpaper.
 
-## Download
+## Windows standalone preview
+
+A separate GroundSurf Windows app is also available: [Windows downloads](https://github.com/takingbreath/GroundSurf/releases/tag/windows-v0.1.0). Lively Wallpaper is not required.
+
+Run the setup EXE, or extract the portable ZIP and launch GroundSurf.exe. The app lives in the system tray, provides pause/speed/new-landscape controls, saves preferences, and offers optional fullscreen/battery/startup rules. The setup defaults to a per-user installation without administrator privileges.
+
+Windows 11 x64 is the primary target; Windows 10 build 19041+ is targeted. It uses .NET Framework 4.8 and Microsoft's WebView2 Runtime, normally already present on Windows 11, to keep the download small. If WebView2 is missing, setup directs you to Microsoft's official runtime download. A small download does not establish low total RAM. The preview is not Authenticode signed and may show a SmartScreen/unknown-publisher warning.
+
+Windows CI executes the actual renderer and install/uninstall checks. Physical Windows 11 multi-monitor, DPI, sleep/wake and long-run memory testing remain outstanding. [Windows source and implementation notes](Windows/README.md).
+
+## Mac download
 
 [Download the universal DMG](https://github.com/takingbreath/GroundSurf/releases/download/v1.3.0/GroundSurf-1.3.0-universal.dmg), open it, drag GroundSurf into Applications, and open the app.
 

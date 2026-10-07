@@ -190,10 +190,27 @@ namespace GroundSurf {
             settings.Speed=24;RefreshPlayback();await Task.Delay(750);
             using(var stream=File.Create(Path.ChangeExtension(testReport,"png")))await view.Snapshot(stream);
             var attachment="not-tested";
-            try {
-                var host=NativeDesktop.Discover();var test=new WallpaperWindow(new Rectangle(0,0,320,240),host,icon);
-                try {NativeDesktop.Attach(test.Handle,test.DisplayBounds,host);if(!test.Attached)throw new Exception("Parent attachment mismatch");attachment="parent-verified";}finally {test.Dispose();}
-            }catch(Exception e){attachment="desktop-unavailable: "+e.Message;}
+            DesktopTarget host=null;
+            try {host=NativeDesktop.Discover();}
+            catch(Exception e){attachment="desktop-unavailable: "+e.Message;}
+            if(host!=null) {
+                var test=new WallpaperWindow(new Rectangle(0,0,320,240),host,icon);
+                try {
+                    await test.Initialize(environment,"GroundSurf-desktop-check");
+                    if(!test.Attached)throw new Exception("Parent attachment mismatch");
+                    var expires=DateTime.UtcNow.AddSeconds(15);bool rendered=false;
+                    while(DateTime.UtcNow<expires) {
+                        test.Tick();
+                        if(test.Loaded) {
+                            var result=await ReadStats(test);
+                            if(result!=null && result.ContainsKey("objects") && Convert.ToDouble(result["position"])>3 && Convert.ToString(result["lastError"])==""){rendered=true;break;}
+                        }
+                        await Task.Delay(100);
+                    }
+                    if(!rendered)throw new Exception("Attached desktop WebView did not generate and scroll.");
+                    attachment="renderer-and-parent-verified";
+                } finally {test.Dispose();}
+            }
             var report=new {result="PASS",engine=environment.BrowserVersionString,scrolled=true,pauseStoppedTimer=true,overlappingSleepStates=true,desktopAttachment=attachment,stats=await ReadStats(view)};
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(testReport)));
             File.WriteAllText(testReport,new JavaScriptSerializer().Serialize(report));ExitThread();
